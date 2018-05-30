@@ -58,11 +58,15 @@ export default {
   },
   methods:{
     loadData(){
+      console.log('pulldown')
       setTimeout(()=>{
         this.finishPullDown().then((res)=>{
           console.log('finish')
-          // this.scrollTo(200)
+          setTimeout(()=>{
+            this.refreshScroll()
+          },700)
         })
+        
       },1000)
     },
     scroll(pos){
@@ -83,6 +87,9 @@ export default {
     },
     initScroll() {
       return this.$refs.scrollEle._initScroll()
+    },
+    refreshScroll() {
+      return this.$refs.scrollEle.refresh()
     },
   },
   mounted(){
