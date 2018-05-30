@@ -103,6 +103,7 @@
           probeType: this.probeType,
           click: this.click,
           scrollX: this.scrollX,
+          mouseWheel: true,
           pullDownRefresh: this.pullDownRefresh,
         })
 
