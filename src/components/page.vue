@@ -3,16 +3,19 @@
     <scroll class="wrap"
             ref='scrollEle'
             :data="info"
-            :pulldown="true"
+            :pulldown="canPulldown"
+            :pullup="canPullup"
             :listenScroll='true'
             :pullDownRefresh="pullDownRefreshObj"
+            :pullUpLoad="pullUpLoadObj"
             @pulldown="loadData"
+            @scrollToEnd='pullup'
             @scroll='scroll'>
-      <div class="content">
-        <div class="fresh"> loading...</div>
-        <p class='li' v-for="item in info">{{item}}</p>
-        <p class='li to'>middle</p>
-        <p class='li' v-for="item in info">{{item}}</p>
+      <div class="box" ref='box'>
+        <div class="content" :style='`min-height:${mH}px`'>
+          <div class="fresh"> loading...</div>
+          <p class='li' v-for="item in info">{{item}}</p>
+        </div>
       </div>
     </scroll>
   </div>
@@ -27,6 +30,8 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
+      canPulldown:true,
+      canPullup:true,
       msg: 'Welcome to Your Vue.js App',
       info:[
         'Welcome to Better-scroll',
@@ -34,14 +39,21 @@ export default {
         'Welcome to Better-scroll',
         'Welcome to Better-scroll',
         'Welcome to Better-scroll',
-        'Welcome to Better-scroll',
-        'Welcome to Better-scroll',
-        'Welcome to Better-scroll',
-        'Welcome to Better-scroll',
-        'Welcome to Better-scroll',
-        'Welcome to Better-scroll',
-        'Welcome to Better-scroll',
+        'Welcome t_o Better-scroll',
+        'Welcome t_o Better-scroll',
+        'Welcome t_o Better-scroll',
+        'Welcome t_o Better-scroll',
+        // 'Welcome t_o Better-scroll',
+        // 'Welcome t_o Better-scroll',
+        // 'Welcome to Better-scroll',
+        // 'Welcome to Better-scroll',
+        // 'Welcome to Better-scroll',
+        // 'Welcome to Better-scroll',
+        // 'Welcome t_o Better-scroll',
+        // 'Welcome t_o Better-scroll',
+        // 'Welcome t_o Better-scroll',
       ],
+      mH:0,
     }
   },
   components:{
@@ -53,6 +65,11 @@ export default {
         threshold: 60,
         stop: 50,
         stopTime:500
+      }
+    },
+    pullUpLoadObj(){
+      return {
+        threshold: 60
       }
     }
   },
@@ -66,7 +83,15 @@ export default {
             this.refreshScroll()
           },700)
         })
-        
+      },1000)
+    },
+    pullup(){
+      console.log('pullup')
+      setTimeout(()=>{
+        this.info = this.info.concat(['123','87','45','456'])
+        this.finishPullUp().then((res)=>{
+          console.log('up - finish')
+        })
       },1000)
     },
     scroll(pos){
@@ -85,6 +110,9 @@ export default {
     finishPullDown() {
       return this.$refs.scrollEle.finishPullDown()
     },
+    finishPullUp() {
+      return this.$refs.scrollEle.finishPullUp()
+    },
     initScroll() {
       return this.$refs.scrollEle._initScroll()
     },
@@ -93,8 +121,11 @@ export default {
     },
   },
   mounted(){
+    
+    this.mH = this.$refs.box.clientHeight + 1
     // 初始化
     this.initScroll()
+    
   },
 }
 </script>
@@ -112,7 +143,12 @@ html,body,#app,.page,.wrap{
   text-align: center;
   padding:18px;
 }
-.content{}
+.box{
+  min-height: 100%;
+}
+.content{
+  /*min-height: 800px;*/
+}
 .fresh{
   height: 50px;
   line-height: 50px;

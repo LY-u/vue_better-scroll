@@ -9,6 +9,11 @@
   import BScroll from 'better-scroll'
 
   export default {
+    data(){
+      return {
+        isPullUpLoad:true
+      }
+    },
     props: {
       /**
        * 1 滚动的时候会派发scroll事件，会截流。
@@ -52,6 +57,10 @@
        */
       pullup: {
         type: Boolean,
+        default: false
+      },
+      pullUpLoad: {
+        type: null,
         default: false
       },
       /**
@@ -103,10 +112,12 @@
           probeType: this.probeType,
           click: this.click,
           scrollX: this.scrollX,
+
+          // 鼠标滚轮
           mouseWheel: true,
           pullDownRefresh: this.pullDownRefresh,
+          pullUpLoad: this.pullUpLoad,
         })
-
         // 是否派发滚动事件
         if (this.listenScroll) {
           this.scroll.on('scroll', (pos) => {
@@ -116,10 +127,17 @@
 
         // 是否派发滚动到底部事件，用于上拉加载
         if (this.pullup) {
-          this.scroll.on('scrollEnd', () => {
-            // 滚动到底部
-            if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
+          // this.scroll.on('scrollEnd', () => {
+          //   // 滚动到底部
+          //   if (this.scroll.y <= (this.scroll.maxScrollY + 50) && this.isPullUpLoad){
+          //     this.$emit('scrollToEnd')
+          //     this.isPullUpLoad = false
+          //   }
+          // })
+          this.scroll.on('pullingUp', () => {
+            if(this.isPullUpLoad){
               this.$emit('scrollToEnd')
+              this.isPullUpLoad = false
             }
           })
         }
@@ -166,6 +184,15 @@
           setTimeout(() => {
             // this.isRebounding = true
             this.scroll.finishPullDown()
+            resolve()
+          }, 0)
+        })
+      },
+      finishPullUp() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            this.isPullUpLoad = true
+            this.scroll.finishPullUp()
             resolve()
           }, 0)
         })
